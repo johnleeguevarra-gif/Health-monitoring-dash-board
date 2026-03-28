@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Health Monitoring Dashboard</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<link rel="stylesheet" href="Practice-2.css">
+
+</head>
+
+<body>
+<div class="container">
+
+<!-- Sidebar -->
+<div class="sidebar">
+<i class="fas fa-home" onclick="navigate('Home')"></i>
+<i class="fas fa-clock" onclick="navigate('Archive')"></i>
+<i class="fas fa-id-card" onclick="navigate('Records')"></i>8
+<i class="fas fa-heartbeat" onclick="navigate('Health')"></i>
+<i class="fas fa-bell" onclick="navigate('Alerts')"></i>
+<i class="fas fa-calendar" onclick="navigate('Calendar')"></i>
+</div>
+
+<!-- Main -->
+<div class="main">
+
+<div class="header">
+<div>
+WEB-BASED HEALTH MONITORING SYSTEM
+<div class="sub">Medical Unit - Admin Interface</div>
+</div>
+<div class="admin-trigger" onclick="toggleAdminMenu()">
+<i class="fas fa-user"></i> Admin
+<div class="admin-dropdown">
+<div class="admin-option" onclick="adminAction('Profile')"><i class="fas fa-user"></i> Profile</div>
+<div class="admin-option" onclick="adminAction('Settings')"><i class="fas fa-cog"></i> Settings</div>
+<div class="admin-option" onclick="adminAction('Logout')"><i class="fas fa-sign-out-alt"></i> Logout</div>
+</div>
+</div>
+</div>
+
+<div class="dashboard">
+
+<!-- Profile -->
+<div class="card profile">
+<img src="Profile.jfif">
+<h2>Mireth Hidalgo</h2>
+<p>Information Technology</p>
+<span class="status">Active Monitoring</span>
+
+<div class="contact">
+<p><i class="fas fa-phone"></i> +123-456-7890</p>
+<p><i class="fas fa-envelope"></i> mireth.hidalgo@gmail.com</p>
+<p><i class="fas fa-map-marker-alt"></i> 143 Anywhere St.</p>
+</div>
+
+<div class="menu">
+<div class="menu-item">Profile <i class="fas fa-chevron-right"></i></div>
+<div class="menu-item">Session <i class="fas fa-chevron-right"></i></div>
+<div class="menu-item">Notification <i class="fas fa-chevron-right"></i></div>
+<div class="menu-item">Insight <i class="fas fa-chevron-right"></i></div>
+</div>
+</div>
+
+<!-- 4 components -->
+<div>
+<div class="metrics">
+<div class="metric"><span>Glucose</span><i class="fas fa-tint"></i></div>
+<div class="metric"><span>Uric Acid</span><i class="fas fa-vial"></i></div>
+<div class="metric"><span>Blood Pressure</span><i class="fas fa-heart"></i></div>
+<div class="metric"><span>Cholesterol</span><i class="fas fa-notes-medical"></i></div>
+</div>
+
+<!--Overview-->
+<div class="overview">
+<h1>Overview</h1><br>
+<p>Maintaining healthy blood sugar levels is essential for sustaining daily energy and supporting overall metabolic health. By staying within your target range, you provide vital nourishment to your cells and organs—specifically protecting your vision and long-term wellness. Proactively managing these levels reduces the risk of future complications, allowing you to live a more vibrant life while staying in control of your health.</p>
+</div>
+
+<div class="card chart">
+  <h4>Glucose Monitoring (2025)</h4>
+  <canvas id="glucoseChart" height="300"></canvas>
+  <div class="chart-legend">
+    <div class="legend-item"><span class="color-normal"></span> NORMAL (<99 mg/dL)</div>
+    <div class="legend-item"><span class="color-prediabetes"></span> PREDIABETES (100-125 mg/dL)</div>
+    <div class="legend-item"><span class="color-diabetes"></span> DIABETES (>126 mg/dL)</div>
+  </div>
+</div>
+</div>
+
+<!-- 3Boxes -->
+<div>
+
+<div class="card calendar">
+<h4 class="calendar-header"><i class="fas fa-chevron-left nav-arrow prev" onclick="changeMonth(-1)"></i>
+<span id="month-year">July 2025</span>
+<i class="fas fa-chevron-right nav-arrow next" onclick="changeMonth(1)"></i></h4>
+<div class="calendar-grid" id="calendar-grid"></div>
+</div>
+
+<div class="card">
+<h4>Alerts</h4>
+<div class="alert">Missed Checkup <span>3</span></div>
+<div class="alert">Abnormal Vital <span>12</span></div>
+<div class="alert">Expired Clearance <span>7</span></div>
+<div class="alert">Faculty Requiring Follow-Up <span>5</span></div>
+</div>
+
+<div class="card">
+<div class="button" onclick="action('Generate Health Report')">Generate Health Report <i class="fas fa-file"></i></div>
+<div class="button" onclick="action('Export Summary')">Export Summary <i class="fas fa-download"></i></div>
+<div class="button" onclick="action('Print Medical Clearance')">Print Medical Clearance <i class="fas fa-print"></i></div>
+</div>
+
+</div>
+
+</div>
+</div>
+</div>
+
+<script>
+function navigate(page){
+alert('Navigating to ' + page);
+}
+
+function action(type){
+alert(type + ' clicked');
+}
+
+function toggleAdminMenu() {
+  const dropdown = document.querySelector('.admin-dropdown');
+  dropdown.classList.toggle('show');
+}
+
+let currentMonth = 6; // July (0=Jan)
+let currentYear = 2025;
+const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+
+function changeMonth(direction) {
+  currentMonth = (currentMonth + direction + 12) % 12;
+  if (direction === 1 && currentMonth === 0) currentYear++;
+  if (direction === -1 && currentMonth === 11) currentYear--;
+  updateCalendar();
+}
+
+function updateCalendar() {
+  const monthYear = document.getElementById('month-year');
+  monthYear.textContent = `${months[currentMonth]} ${currentYear}`;
+
+  const grid = document.getElementById('calendar-grid');
+  grid.innerHTML = '';
+
+  const date = new Date(currentYear, currentMonth, 1);
+  const firstDay = date.getDay();
+  const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+
+  // 42 cells (6 rows)
+  for (let i = 0; i < 42; i++) {
+    const day = document.createElement('div');
+    if (i < firstDay || i >= firstDay + daysInMonth) {
+      day.className = 'empty-day';
+      day.textContent = '';
+    } else {
+      day.textContent = (i - firstDay + 1).toString();
+      // Active day for initial July 20
+      if (currentMonth === 6 && currentYear === 2025 && day.textContent === '20') {
+        day.classList.add('active');
+      }
+    }
+    grid.appendChild(day);
+  }
+}
+
+// Initial load
+updateCalendar();
+
+// Glucose Chart
+document.addEventListener('DOMContentLoaded', function() {
+  const ctx = document.getElementById('glucoseChart').getContext('2d');
+  
+  const chartData = [50, 90, 170, 200, 110, 140, 85, 0, 0, 0, 0, 0];
+  const monthLabels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  const barColors = chartData.map(val => val === 0 ? 'transparent' : val <= 99 ? '#3ddc84' : val <= 125 ? '#f1c40f' : '#e74c3c');
+
+  new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: monthLabels,
+      datasets: [{
+        label: 'Glucose (mg/dL)',
+        data: chartData,
+        backgroundColor: barColors,
+        borderRadius: 8,
+        borderSkipped: false,
+      }, {
+        type: 'line',
+        label: 'Trend',
+        data: chartData,
+        borderColor: '#2f6c84',
+        backgroundColor: 'rgba(47,108,132,0.1)',
+        borderWidth: 3,
+        fill: true,
+        tension: 0.4,
+        pointRadius: 5,
+        pointHoverRadius: 8,
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: ctx => `${ctx.dataset.label}: ${ctx.raw} mg/dL`
+          }
+        }
+      },
+      scales: {
+        x: { title: { display: true, text: 'DATE' } },
+        y: { 
+          min: 0, 
+          max: 220,
+          title: { display: true, text: 'Glucose Levels (mg/dL)' },
+          grid: { color: 'rgba(0,0,0,0.1)' }
+        }
+      },
+      animation: { duration: 1500 }
+    }
+  });
+});
+</script>
+
+</body>
+</html>
